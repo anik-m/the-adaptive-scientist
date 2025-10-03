@@ -49,10 +49,10 @@ I will try to continue the project and will update milestones appropriately.
 
 *   **Phase 1: Exploring High-Performance Computing (HPC) Integration**
     *   Learn how to scale this experiment by running multiple simulations in parallel.
-    *   Investigate frameworks like **SmartSim** or **DRLinFluids** that enable efficient, in-memory data exchange between Python and HPC simulations, moving beyond the slow file-based method used here.
+    *   Investigate frameworks like **SmartSim** [3] or **DRLinFluids** [4] that enable efficient, in-memory data exchange between Python and HPC simulations, moving beyond the slow file-based method used here.
 *   **Phase 2: Deepening the Research**
     *   Apply the agent to more complex 2D and 3D CFD problems.
-    *   Experiment with more sophisticated state representations and reward-shaping techniques.
+    *   Experiment with more sophisticated state representations and reward-shaping techniques, inspired by recent work. [5]
 
 
 ### Getting Started: Run the Demo
