@@ -1,20 +1,122 @@
 
 
+
 # The Adaptive Scientist
 
 
 
-This repository documents my personal project aimed at learning and applying Deep Reinforcement Learning (RL) to a challenging and interesting problem: controlling a scientific simulation in real-time. The goal is to train an RL agent that can dynamically tune the hyperparameters of a Computational Fluid Dynamics (CFD) solver to help it converge faster.
+This project uses a Deep Reinforcement Learning (RL) based agent to intelligently control the relaxation factors in an OpenFOAM CFD simulation, with the goal of reaching a converged solution faster than the default solver settings.
+
+
+
+## 🚀 Project Structure
+
+- **`/src`**: Contains the core Python source code.
+  - `cfd_environment.py`: The custom `gymnasium` environment that interfaces with OpenFOAM.
+  - `ppo_agent.py`: The PPO agent implementation.
+  - `utils/case_generator.py`: A utility to create the OpenFOAM test case.
+- **`train.py`**: The main script to train the RL agent.
+- **`evaluate.py`**: A script to evaluate a trained agent and compare it to the baseline.
+- **`setup.sh`**: A shell script to install all dependencies (OpenFOAM and Python packages) in a Debian/Ubuntu-based environment like Google Colab.
+- **`requirements.txt`**: A list of Python packages required for this project.
+
+## ⚙️ Setup and Installation
+
+### In a Cloud Environment (like Google Colab)
+
+1.  **Clone the repository:**
+    ```bash
+    !git clone [https://github.com/your-username/ppo-openfoam-optimizer.git](https://github.com/your-username/ppo-openfoam-optimizer.git)
+    !cd ppo-openfoam-optimizer
+    ```
+
+2.  **Run the setup script:**
+    This will install OpenFOAM and all Python dependencies. This will take several minutes.
+    ```bash
+    !bash setup.sh
+    ```
+
+
+
+## 📈 Usage
+
+### 1. Run the Baseline Simulation
+First, establish the performance benchmark using the default OpenFOAM solver settings.
+
+```bash
+!python train.py --baseline-only
+```
+This will create a `cavity_base/` directory containing the CFD case and a `log.baseline` file with the results.
+
+### 2. Train the RL Agent
+To train the agent, run the `train.py` script.
+
+```bash
+!python train.py
+```
+You can customize the training process with command-line arguments. For example, to run a longer training session:
+```bash
+!python train.py --max-timesteps 20000 --lr-actor 0.00005
+```
+The trained model will be saved as `PPO_CFD_Solver.pth` by default.
+
+
+
+### 3. Evaluate the Trained Agent
+Once training is complete, evaluate your saved model to see if it outperforms the baseline.
+
+```bash
+!python evaluate.py --model-path PPO_CFD_Solver.pth
+```
+The script will run a full simulation controlled by the agent and print a summary comparing the number of steps taken by the agent versus the baseline.
+
+## Local Setup
+
+For a local installation, it's highly recommended to use a virtual environment to manage project dependencies.
+
+1.  **Create and Activate a Virtual Environment:**
+    Open your terminal in the project directory and run:
+    ```bash
+    # Create a virtual environment named 'venv'
+    python3 -m venv venv
+
+    # Activate the environment (on Linux/macOS)
+    source venv/bin/activate
+    ```
+Or if you prefer, use conda/mamba
+
+2.  **Run the Setup Script:**
+    The `setup.sh` script will install all system and Python dependencies. Execute it from your terminal using `bash`:
+    ```bash
+    bash setup.sh
+    ```
+
+3.  **Run the Project:**
+    Once the setup is complete, you can run the project scripts.
+    ```bash
+    python train.py
+    ```
+    *Note: Remember to deactivate the environment in your terminal when you are finished.*
+
+
+
+
+## 📈 Simulation & Results
+
+This project simulates **lid-driven cavity flow**, a classic CFD benchmark problem. The case involves a fluid within a square cavity where the top "lid" moves at a constant speed, generating a primary vortex within the fluid.
+
+The RL agent was trained for **5,000 timesteps** to control the solver's under-relaxation factors. It successfully learned a policy that dramatically outperformed the baseline solver, reaching convergence **90% faster**.
+
+| Method                  | Iterations to Converge |
+| ----------------------- | ---------------------- | 
+| Baseline (Default URFs) | 1000                   | 
+| **Trained RL Agent** | **100** |
 
 ### Motivation
 
-I started this project to move beyond textbook examples and gain hands-on experience with the entire RL workflow. My primary goal was to understand how to connect a learning agent to a complex, "black-box" environment like a physics simulator, which is a common real-world application of RL. This project serves as my sandbox for exploring the practical challenges of defining state and action spaces, designing reward functions, and implementing a complete agent-environment loop from scratch.
+My primary goal was to see if connecting a learning agent to a complex, "black-box" environment like a physics simulator, which is a common real-world application of RL, would have any effect. This project serves as my sandbox for exploring the practical challenges of defining state and action spaces, designing reward functions, and implementing a complete agent-environment loop from scratch. This helped me gain useful knowledge in RL, PPO, and to apply it to a real word problem.
 
 
-
-### Technical Approach 
-
-This proof-of-concept is built entirely within a notebook, making it self-contained and easy to reproduce. Here are the key technical components I implemented:
 
 #### Core Technologies
 
@@ -42,10 +144,11 @@ RL agent communicates with the C++-based OpenFOAM solver using a simple but effe
 
 ### Project Status & Learning Goals
 
-I will try to continue the project and will update milestones appropriately.
 
-*   **Phase 0: Establishing a proof of concept for RL (completed)**
-    *   Learn about all the underlying compoenents necessary for establishing justification for RL and PPO, and implementing it.
+*   **Phase 0: Establishing a proof of concept for RL - [Completed]**
+    *   Learn about the underlying compoenents necessary for establishing justification for RL and PPO, and implementing it.
+
+
 
 *   **Phase 1: Exploring High-Performance Computing (HPC) Integration**
     *   Learn how to scale this experiment by running multiple simulations in parallel.
@@ -55,21 +158,12 @@ I will try to continue the project and will update milestones appropriately.
     *   Experiment with more sophisticated state representations and reward-shaping techniques, inspired by recent work. [5]
 
 
-### Getting Started: Run the Demo
+### Feedback and Collaborations Welcome!
 
-You can run my proof-of-concept yourself directly in your browser.
+Further development of this project, such as applying the agent to more complex simulations or exploring other RL algorithms, is dependent on finding interested collaborators. Please reach out if you would like to contribute. 
 
-[Open in colab](https://colab.research.google.com/github/anik-m/YOUR_REPO_NAME/blob/main/adaptive_scientist_colab_demo.ipynb)
+As this is a personal learning project, I am very open to feedback, suggestions, and advice from others. 
 
-**Instructions:**
-
-1.  Click the "Open in Colab" button above.
-2.  In the notebook, click `Runtime` -> `Run all`.
-3.  The notebook will install OpenFOAM, run the baseline simulation, train the RL agent, and evaluate its performance. The entire process takes about [e.g., 1-2 hours] to complete.
-
-### Feedback Welcome!
-
-As this is a personal learning project, I am very open to feedback, suggestions, and advice from others. If you have any ideas for improvement or spot something that could be done better, please feel free to open an issue!
 
 ### References and Further Reading
 
@@ -82,7 +176,5 @@ As this is a personal learning project, I am very open to feedback, suggestions,
 [4] Wang, Q., et al. (2022). "DRLinFluids--An open-source python platform of coupling Deep Reinforcement Learning and OpenFOAM." *Physics of Fluids*.
 
 [5] Maulik, R., et al. (2021). "Reinforcement learning for the runtime control of physics-based simulations." *Journal of Open Source Software*.
-
-
 
 
